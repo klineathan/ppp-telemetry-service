@@ -1,0 +1,72 @@
+# Kamal deployment configuration for ppp-telemetry-service
+# Docs: https://kamal-deploy.org/docs/configuration/
+
+service: ppp-telemetry
+
+# Docker image name
+image: ppp-telemetry-service
+
+# Deploy to servers on your local network
+servers:
+  web:
+    hosts:
+      - 192.168.1.100  # Replace with your VM's IP address
+    labels:
+      traefik.http.routers.ppp-telemetry.rule: Host(`telemetry.local`)
+    options:
+      network: kamal
+
+# Container registry
+# For local deployment, you can use Docker Hub or a private registry
+registry:
+  server: ghcr.io
+  username:
+    - KAMAL_REGISTRY_USERNAME
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Build configuration
+builder:
+  arch: amd64
+
+# Environment variables
+env:
+  clear:
+    PORT: 3000
+    NODE_ENV: production
+  secret:
+    - DATABASE_URL
+
+# Healthcheck configuration
+proxy:
+  ssl: false
+  host: telemetry.local
+  app_port: 3000
+  healthcheck:
+    interval: 3
+    path: /api/health
+    timeout: 3
+
+# PostgreSQL database accessory
+accessories:
+  db:
+    image: postgres:16
+    host: 192.168.1.100  # Replace with your VM's IP address
+    port: 5432
+    env:
+      clear:
+        POSTGRES_DB: ppp_telemetry
+      secret:
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data
+    options:
+      network: kamal
+
+# SSH configuration
+ssh:
+  user: jon  # Or your SSH user
+  # keys_only: true  # Uncomment if using SSH keys only
+  # keys: ["~/.ssh/id_rsa"]  # Path to your SSH key
+
