@@ -342,6 +342,13 @@ async function insertMediumFrequencyData(
 		) ?? [];
 
 	// Process readings
+	// PostgreSQL bigint max is 9223372036854775807 (2^63 - 1)
+	// Linux reports RLIM_INFINITY as ~18446744073709551615 (2^64 - 1) for unlimited rss_limit
+	const POSTGRES_BIGINT_MAX = 9223372036854775807n;
+	const clampToBigint = (value: number): number => {
+		return value > Number(POSTGRES_BIGINT_MAX) ? Number(POSTGRES_BIGINT_MAX) : value;
+	};
+
 	const processInserts = processes.processes.map((proc) =>
 		db.insert(schema.processReadings).values({
 			readingId,
@@ -357,7 +364,7 @@ async function insertMediumFrequencyData(
 			cpuPercent: proc.cpuPercent ?? null,
 			vsize: proc.vsize,
 			rss: proc.rss,
-			rssLimit: proc.rssLimit,
+			rssLimit: clampToBigint(proc.rssLimit),
 			memoryPercent: proc.memoryPercent,
 			numThreads: proc.numThreads,
 			nice: proc.nice,
