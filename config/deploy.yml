@@ -17,6 +17,8 @@ builder:
   arch: amd64
 
 env:
+  clear:
+    PORT: "80"
   secret:
     - DATABASE_URL
 
