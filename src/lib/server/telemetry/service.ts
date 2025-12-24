@@ -342,11 +342,11 @@ async function insertMediumFrequencyData(
 		) ?? [];
 
 	// Process readings
-	// PostgreSQL bigint max is 9223372036854775807 (2^63 - 1)
 	// Linux reports RLIM_INFINITY as ~18446744073709551615 (2^64 - 1) for unlimited rss_limit
-	const POSTGRES_BIGINT_MAX = 9223372036854775807n;
+	// JavaScript can't precisely represent integers > Number.MAX_SAFE_INTEGER (9007199254740991)
+	// Use MAX_SAFE_INTEGER as the cap since it fits in PostgreSQL bigint and is safely representable
 	const clampToBigint = (value: number): number => {
-		return value > Number(POSTGRES_BIGINT_MAX) ? Number(POSTGRES_BIGINT_MAX) : value;
+		return value > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : value;
 	};
 
 	const processInserts = processes.processes.map((proc) =>
