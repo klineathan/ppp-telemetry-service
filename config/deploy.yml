@@ -24,6 +24,8 @@ proxy:
   ssl: false
   healthcheck:
     path: /api/health
+    interval: 3
+    timeout: 3
 
 accessories:
   db:
