@@ -33,6 +33,7 @@ accessories:
   db:
     image: postgres:16
     role: web
+    port: "5432:5432"
     env:
       clear:
         POSTGRES_DB: ppp_telemetry
