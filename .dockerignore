@@ -35,4 +35,5 @@ tests
 *.test.ts
 *.spec.ts
 
+# Drizzle config (only needed for migrations, not runtime)
 drizzle.config.ts
