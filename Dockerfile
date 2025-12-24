@@ -23,13 +23,6 @@ COPY --from=builder /app/package.json ./
 # Install production dependencies only
 RUN bun install --production --frozen-lockfile
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOST=0.0.0.0
-
-EXPOSE 3000
-
 # Run the application
 CMD ["bun", "run", "./build/index.js"]
 
