@@ -35,3 +35,4 @@ tests
 *.test.ts
 *.spec.ts
 
+drizzle.config.ts
